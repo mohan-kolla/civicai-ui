@@ -8,8 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* These colors match the UNARIS logo and beachfront vibe */
-            --header-bg: #FFFFFF; /* Match the logo background */
+            --header-bg: #FFFFFF; 
             --sunset-orange: #F7941E;
             --ocean-blue: #1E4D92;
             --sand-bg: #F8F9FA;
@@ -19,10 +18,7 @@
             font-family: 'Inter', sans-serif; 
             background-color: var(--sand-bg); 
             color: #334155;
-        }
-
-        .bg-ocean-grad { 
-            background: linear-gradient(135deg, var(--ocean-blue) 0%, #0077B6 100%); 
+            margin: 0;
         }
 
         .bg-sunset { background-color: var(--sunset-orange); }
@@ -34,7 +30,6 @@
             scrollbar-color: #CBD5E1 transparent;
         }
 
-        /* Message styling */
         .bubble-bot {
             background-color: #FFFFFF;
             border: 1px solid #E2E8F0;
@@ -49,7 +44,6 @@
             border-top-right-radius: 0.25rem;
         }
 
-        /* Loader animation */
         .dot { animation: dot-blink 1.4s infinite both; }
         .dot:nth-child(2) { animation-delay: 0.2s; }
         .dot:nth-child(3) { animation-delay: 0.4s; }
@@ -62,29 +56,30 @@
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <header style="background-color: var(--header-bg);" class="border-b border-gray-100 p-3 shadow-sm sticky top-0 z-10">
-        <div class="max-w-5xl mx-auto flex justify-between items-center px-4">
-            <div class="flex items-center space-x-4">
-                <img src="unaris_logo.jpeg" alt="UNARIS" class="h-10 w-auto mix-blend-multiply object-contain">
-                
-                <div class="h-5 w-px bg-gray-200"></div>
-                
-                <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 hidden sm:inline">CivicAI</span>
+    <header style="background-color: var(--header-bg);" class="border-b border-gray-100 p-3 shadow-sm sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto flex justify-between items-center px-4 relative">
+            
+            <div class="flex items-center">
+                <div class="relative w-64 h-10"> 
+                    <img src="unaris_logo.jpeg" alt="UNARIS" 
+                         class="absolute -top-4 left-0 h-24 w-auto mix-blend-multiply object-contain z-50">
+                </div>
             </div>
             
-            <div class="flex items-center space-x-2 bg-white/50 px-3 py-1 rounded-full border border-gray-50">
-                <span class="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)] animate-pulse"></span>
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Live Analysis</span>
+            <div class="flex items-center space-x-2 bg-white/60 px-3 py-1 rounded-full border border-gray-100 shadow-sm">
+                <span class="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]"></span>
+                <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Live Analysis</span>
             </div>
+
         </div>
     </header>
 
-    <main class="flex-grow w-full max-w-4xl mx-auto p-4 flex flex-col">
+    <main class="flex-grow w-full max-w-4xl mx-auto p-4 mt-4 flex flex-col">
         <div id="chat-window" class="chat-container overflow-y-auto space-y-6 mb-4 p-2">
             <div class="flex justify-start">
                 <div class="bubble-bot max-w-[85%] p-4 shadow-sm">
                     <p class="text-sm leading-relaxed">
-                        Welcome to the <strong>UNARIS</strong> terminal. I'm ready to answer your questions!
+                        Welcome to the <strong>UNARIS</strong> terminal. How can I assist you with your policy research today?
                     </p>
                 </div>
             </div>
@@ -102,12 +97,11 @@
                     </svg>
                 </button>
             </div>
-            <p class="text-center text-[9px] text-gray-400 mt-3 uppercase tracking-widest">System nodes: Railway Backend • LlamaIndex RAG</p>
+            <p class="text-center text-[9px] text-gray-400 mt-3 uppercase tracking-widest">Railway Backend • LlamaIndex RAG</p>
         </div>
     </main>
 
     <script>
-        // API Configuration
         const API_URL = "https://civicai-mvp-production.up.railway.app/ask";
         const chatWindow = document.getElementById('chat-window');
         const userInput = document.getElementById('userInput');
@@ -132,11 +126,9 @@
             const query = userInput.value.trim();
             if (!query) return;
 
-            // 1. Show user message
             appendMessage('user', query);
             userInput.value = '';
 
-            // 2. Show beachfront-style loader
             const loadingId = "loading-" + Date.now();
             const loadingDiv = document.createElement('div');
             loadingDiv.id = loadingId;
@@ -156,21 +148,18 @@
                     body: JSON.stringify({ query: query, format: "pdf" })
                 });
 
-                if (!response.ok) throw new Error("Backend offline");
+                if (!response.ok) throw new Error("Offline");
 
                 const data = await response.json();
                 document.getElementById(loadingId).remove();
-                
-                // 3. Show bot response
-                appendMessage('bot', data.answer || "I processed the request but found no relevant data in the plan.");
+                appendMessage('bot', data.answer || "I found no relevant data.");
                 
             } catch (error) {
                 document.getElementById(loadingId).remove();
-                appendMessage('bot', "Connection Error: The UNARIS server on Railway is currently waking up or experiencing high traffic. Please try again in 30 seconds.");
+                appendMessage('bot', "Connection Error: Server is warming up. Please try again in 30 seconds.");
             }
         }
 
-        // Event Listeners
         sendBtn.addEventListener('click', handleSend);
         userInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') handleSend();
