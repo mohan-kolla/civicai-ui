@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivicAI Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-8">
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold mb-4 text-blue-600">CivicAI MVP</h1>
+        <p class="mb-4 text-gray-600">Connecting to: <span class="font-mono text-sm bg-gray-200 p-1">civicai-mvp-production.up.railway.app</span></p>
+        
+        <button id="fetchBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Check API Status
+        </button>
+
+        <div id="response" class="mt-6 p-4 border rounded bg-gray-50 hidden">
+            <pre id="jsonOutput" class="text-sm overflow-auto"></pre>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://civicai-mvp-production.up.railway.app";
+        const btn = document.getElementById('fetchBtn');
+        const outputDiv = document.getElementById('response');
+        const outputPre = document.getElementById('jsonOutput');
+
+        btn.addEventListener('click', async () => {
+            btn.innerText = "Loading...";
+            try {
+                // Change '/docs' to whatever your actual endpoint is (e.g., '/')
+                const response = await fetch(`${API_URL}/`);
+                const data = await response.json();
+                
+                outputDiv.classList.remove('hidden');
+                outputPre.innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                alert("Connection failed! Check if CORS is enabled on Railway.");
+                console.error(error);
+            } finally {
+                btn.innerText = "Check API Status";
+            }
+        });
+    </script>
+</body>
+</html>
